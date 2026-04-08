@@ -5515,6 +5515,37 @@ function salvarCheckin(){
   };
   try{
     var all=getCheckins();all.push(entry);saveCheckins(all);atualizarCntCheckins();
+    // ══════════════════════════════════════════════════════
+// ADICIONAR NO HTML ORIGINAL — kavak_sistema_v20_melhorado__2_.html
+// ══════════════════════════════════════════════════════
+//
+// ONDE ADICIONAR:
+// Na função salvarCheckin(), logo APÓS a linha:
+//   var all=getCheckins();all.push(entry);saveCheckins(all);atualizarCntCheckins();
+//
+// Cole o bloco abaixo imediatamente depois:
+
+// ── ENVIAR PARA GOOGLE SHEETS ──────────────────────────
+var SHEETS_WEBHOOK = '1p7Jn9uVIkePjWOnTpYf7SwLb5xa6i_p1F9vZSF1QewE';
+// ^ Substitua pela URL gerada ao implantar o Code_receptor.gs
+
+fetch(SHEETS_WEBHOOK, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(entry)
+})
+.then(function(r){ return r.json(); })
+.then(function(res){
+  if(res.ok){
+    console.log('[Sheets] Check-in gravado na linha', res.linha);
+  } else {
+    console.warn('[Sheets] Erro ao gravar:', res.erro);
+  }
+})
+.catch(function(err){
+  console.warn('[Sheets] Falha na conexão:', err.message);
+});
+// ── FIM DO TRECHO A ADICIONAR ──────────────────────────
   }catch(e){
     errEl.textContent='Erro ao salvar: '+e.message;errEl.className='err show';
     console.error('salvarCheckin error:',e);
